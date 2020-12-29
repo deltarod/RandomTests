@@ -2,10 +2,10 @@ import bbi
 import time
 import subprocess
 import pandas as pd
+import numpy as np
 import matplotlib.pyplot as plt
 
-dirUrl = 'https://rcdata.nau.edu/genomic-ml/PeakSegFPOP/labels/H3K4me3_TDH_ENCODE/samples/aorta/ENCFF115HTK/'
-fileUrl = '%scoverage.bigWig' % dirUrl
+fileUrl = 'https://rcdata.nau.edu/genomic-ml/PeakSegFPOP/labels/H3K4me3_TDH_ENCODE/samples/aorta/ENCFF115HTK/coverage.bigWig'
 
 
 def runTest(fileUrl, chrom, start, end, bins):
@@ -19,12 +19,18 @@ def runTest(fileUrl, chrom, start, end, bins):
     bbiLen = len(bbiOut)
 
     subprocessStartTime = time.time()
-
-    subprocessOut = subprocess.run(['./bigWigSummary', fileUrl, chrom, str(start), str(end), str(bins)],
+    subprocessOut = subprocess.run(['bin/bigWigSummary', fileUrl, chrom, str(start), str(end), str(bins)],
                            stdout=subprocess.PIPE).stdout.decode('utf-8')
+    data = subprocessOut.split()
+    floatData = []
+    for i in data:
+        try:
+            floatData.append(float(i))
+        except ValueError:
+            continue
+    data = np.array(floatData).astype(np.double)
     subprocessEndTime = time.time()
-    subprocessLen = len(subprocessOut.split())
-
+    subprocessLen = len(data)
     return {'chrom': chrom, 'start': start, 'end': end, 'diff': diff, 'bins': bins,
             'bbiStartTime': bbiStartTime, 'bbiEndTime': bbiEndTime,
             'bbiTimeDiff': bbiEndTime - bbiStartTime, 'bbiLen': bbiLen,
@@ -56,4 +62,4 @@ plt.title('comparison of bin size between bbi.fetch and subprocess')
 
 plt.legend()
 
-plt.savefig('Screenshots/SumResults.png')
+plt.savefig('compareBBI/Screenshots/SumResults.png')

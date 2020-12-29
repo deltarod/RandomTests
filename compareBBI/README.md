@@ -10,12 +10,8 @@ The below graph shows the results comparing a call to bigWigSummary using subpro
 The Below graph shows the results comparing a call to bigWigToBedGraph using subprocess and bbi
 ![Graph showing results of full test](Screenshots/FullResults.png)
 
-## Setup
-1. clone and setup [RandomTests](../)
-1. `cd compareBBI`
-2. `wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64.v385/bigWigSummary`
-3. `wget http://hgdownload.soe.ucsc.edu/admin/exe/linux.x86_64.v385/bigWigToBedGraph`
-4. `sudo chmod a+x bigWigSummary`
-5. `sudo chmod a+x bigWigToBedGraph`
+## Running
+1. clone and setup [RandomTests](https://github.com/deltarod/RandomTests/)
 6. `python3 -m pip install pybbi`
-7. `python3 run.py`
+7. `python3 compareBBI/bwFullTest.py`
+7. `python3 compareBBI/bwSumTest.py`

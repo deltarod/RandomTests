@@ -14,13 +14,13 @@ def compare(fileUrl, chrom, start, end):
         file.fetch(chrom, start, end)
     bbiEndTime = time.time()
     osStartTime = time.time()
-    subprocess.run(['./bigWigToBedGraph',
-                            fileUrl,
-                            'data/out.bedGraph',
-                            '-chrom=%s' % chrom,
-                            '-start=%s' % start,
-                            '-end=%s' % end],
-                           stdout=subprocess.PIPE).stdout.decode('utf-8')
+    subprocess.run(['bin/bigWigToBedGraph',
+                    fileUrl,
+                    'out/out.bedGraph',
+                    '-chrom=%s' % chrom,
+                    '-start=%s' % start,
+                    '-end=%s' % end],
+                   stdout=subprocess.PIPE).stdout.decode('utf-8')
     osEndTime = time.time()
     return pd.Series({'chrom': chrom, 'start': start, 'end': end, 'length': end-start,
             'bbiStartTime': bbiStartTime, 'bbiEndTime': bbiEndTime,
@@ -33,8 +33,11 @@ def applyTest(row):
     return compare(fileUrl, row['chrom'], row['start'], row['end'])
 
 
-os.makedirs('data')
-probs = pd.read_csv('problems.bed', header=None, sep='\t')
+try:
+    os.makedirs('out')
+except FileExistsError:
+    pass
+probs = pd.read_csv('data/problems.bed', header=None, sep='\t')
 probs.columns = ['chrom', 'start', 'end']
 probs['length'] = probs['end'] - probs['start']
 probs = probs.sort_values('length', ignore_index=True, ascending=False)
@@ -53,4 +56,4 @@ plt.title('comparison of length size between subprocess and bbi.fetch')
 
 plt.legend()
 
-plt.savefig('Screenshots/FullResults.png')
+plt.savefig('compareBBI/Screenshots/FullResults.png')
